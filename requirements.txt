@@ -1,0 +1,4 @@
+virustotal-api
+configparser
+datetime
+bs4
