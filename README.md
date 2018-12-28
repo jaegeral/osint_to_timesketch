@@ -23,7 +23,10 @@ meaning internet hosted services. Thus those running those services could potent
 
 ## planned
 
-* CIRCL passive SSL
+* CIRCL passive DNS
+* CIRCL passive SSL calculate first seen date based on isci (https://notary.icsi.berkeley.edu/)
+    * first_seen: the day our data providers first saw the certificate (relative to 1/1/1970)
+
 
 # usage
  
