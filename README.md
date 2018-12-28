@@ -1,16 +1,32 @@
-# vt_timesketch
-Virustotal Data to Timesketch
+# osint_timesketch
+OSINT Data to Timesketch
 
 # idea
 
-Idea of that script is to get a list of domains / ips and pull timeline relevant infos from VT.
+Idea of that script is to get a list of domains / ips and pull timeline relevant infos from VT and other OSINT sources.
 The output should be already timesketchable.
 
+# WARNING
+
+This project should be considered early aplha, everything might be completly
+broken. Run the script on your own risk.
+
+Using that script with high critical indicators might burn your indicators because the script is querying external
+meaning internet hosted services. Thus those running those services could potentially see your queries.
+
+# Sources
+
+## already implemented
+* Virustotal (files)
+* Virustotal (passive DNS)
+* CIRCL passive SSL
+
+## planned
+
+* CIRCL passive SSL
+
 # usage
-
-
-
-  
+ 
    modify the config file
 ```
 cp config_sample.cfg config.cfg
