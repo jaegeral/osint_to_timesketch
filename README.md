@@ -8,9 +8,6 @@ The output should be already timesketchable.
 
 # usage
 
-
-
-  
    modify the config file
 ```
 cp config_sample.cfg config.cfg
@@ -29,7 +26,8 @@ cp config_sample.cfg config.cfg
    
 # sample data
 
-See sample folder.
+See sample folder and also:
+https://github.com/deralexxx/osint-timelines/
 
 # Future features
 
