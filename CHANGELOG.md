@@ -1,3 +1,7 @@
+# 2019-01-12
+
+* introduce Bitcoin parsing to timeline
+
 # 2018-12-30
 
 * lot of improvements

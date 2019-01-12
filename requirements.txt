@@ -3,3 +3,4 @@ configparser
 datetime
 bs4
 pypssl
+coinaddr

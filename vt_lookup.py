@@ -7,6 +7,8 @@ from datetime import datetime
 import time
 import logging
 import pypssl
+import coinaddr
+import requests
 
 logger = logging.getLogger('osint_timesketch')
 logger.setLevel(logging.DEBUG)
@@ -281,7 +283,7 @@ def vt_investigate_ip(ip_to_investigate):
     except:
         logger.error("Issue with: "+ip_to_investigate)
         logger.debug(json.dumps(response, sort_keys=False, indent=4))
-
+    call_wait_method()
 
 def investigate_md5(md5):
     """
@@ -306,7 +308,56 @@ def investigate_md5(md5):
     except:
         logger.error("Issue with "+md5)
         logger.error(json.dumps(response, sort_keys=False, indent=4))
+    call_wait_method()
 
+
+def call_wait_method():
+    # hacky way to not go into rate limit with VT
+    a = DELAY
+    print(" ")
+    while a != 0:
+        import sys
+        sys.stdout.write(str(a) + ' ')
+        sys.stdout.flush()
+        a = a - 1
+        time.sleep(1)
+
+def investigate_bitcoin(wallet=None):
+    logger.debug("Will investigate bitcoin "+wallet)
+
+
+    adress = 'https://chain.so/api/v2/address/BTC/'+wallet
+
+    response = requests.get(adress)
+
+    if response.status_code == 200:
+        # everything went swimmingly
+        # parse the response as JSON
+        content = response.json()
+        print(content['status'])
+        logger.error(json.dumps(content, sort_keys=False, indent=3))
+        if content['status'] == 'success':
+            for tx in content['data']['txs']:
+                date_value = tx['time']
+                value = datetime.fromtimestamp(date_value)
+                date_string = value.strftime('%Y-%m-%d %H:%M:%S')
+
+                timestamp_desc = "BTC_transaction_info_"+wallet
+                datetime_new = convert_date_to_datetime(date_string)
+
+                timestamp = convert_date_to_timestamp(date_string)
+                message = json.dumps(tx,separators=(';', ': '))
+                message = message.replace('\"', '\'')
+                message = "\""+message+"\""
+
+                btc_source_link_source = "https://chain.so/address/BTC/"+wallet
+
+                append_line_to_csv(timestamp, datetime_new, timestamp_desc, message, report, attribution,
+                                   source=btc_source_link_source)
+        else:
+            logger.error("No Success")
+            logger.error(json.dumps(content, sort_keys=False, indent=5))
+        time.sleep(1)
 
 csvfile = open('output.csv', 'w', newline='')
 csvwriter = csv.writer(csvfile, delimiter=',',
@@ -317,25 +368,30 @@ csvwriter.writerow(['timestamp', 'datetime', 'timestamp_desc','message',  'repor
 
 filename = 'input.txt'
 fin=open(filename,'r')
+
+
 for line in fin:
     line = line.replace('\n', '')
     line = line.replace('\t', '')
+    print(line)
+    encoded_line = line.encode('UTF-8')
+    try:
+        is_line_btc = coinaddr.validate('btc', encoded_line)
+        if is_line_btc.valid:
+            bitcoin = True
+    except ValueError:
+            bitcoin = False
+
     if line.split('.')[-1].isdigit():
         # ip
         vt_investigate_ip(line)
         pssl_investigate_ip(line)
+    elif bitcoin is True:
+        investigate_bitcoin(line)
     elif "." in line:
         investigate_domain(line)
     else:
         investigate_md5(line)
 
-    # hacky way to not go into rate limit with VT
-    a = DELAY
-    print(" ")
-    while a != 0:
-        import sys
-        sys.stdout.write(str(a) + ' ')
-        sys.stdout.flush()
-        a=a-1
-        time.sleep(1)
+
 
