@@ -180,7 +180,7 @@ def pssl_investigate_ip(ip_to_investigate):
                       (PSSL_USER, PSSL_PASSWORD))
 
     # a = p.query(domain_to_investigate)
-    b = p.query(ip_to_investigate + "/28")
+    b = p.query(ip_to_investigate + "/32")
 
     for ip in b:
         for certificate in b[ip]['certificates']:
